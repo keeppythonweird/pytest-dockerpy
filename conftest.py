@@ -1,3 +1,4 @@
+import json
 import pprint
 import os
 
@@ -45,11 +46,30 @@ def pytest_runtest_logreport(report):
             report.longrepr.addsection('docker logs', os.linesep.join(log_lines))
 
 
+def pull_image(image):
+    """ Pull the specified image using docker-py
+
+    This function will parse the result from docker-py and raise an exception
+    if there is an error.
+
+    :param image: Name of the image to pull
+    """
+    docker_client = _docker_client()
+    response = docker_client.pull(image)
+    lines = [line for line in response.split("\n") if line]
+
+    # The last line of the response contains the overall result of the pull
+    # operation.
+    pull_result = json.loads(lines[-1])
+    if "error" in pull_result:
+        raise Exception("Could not pull {}: {}".format(
+            image, pull_result["error"]))
+
+
 @pytest.yield_fixture
 def example_container():
     docker_client = _docker_client()
 
-    docker_client.pull(IMAGE)
     container = docker_client.create_container(
         image=IMAGE,
         detach=True,
