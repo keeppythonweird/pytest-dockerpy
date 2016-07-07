@@ -1,4 +1,4 @@
-# Example code to accompany presentation
+# System testing with pytest and docker-py: example code!
 
 This code demonstrates how to use [pytest](http://pytest.org/latest/) and
 [docker-py](https://github.com/docker/docker-py#docker-py).

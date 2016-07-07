@@ -56,7 +56,7 @@ def pull_image(image):
     """
     docker_client = _docker_client()
     response = docker_client.pull(image)
-    lines = [line for line in response.split("\n") if line]
+    lines = [line for line in response.splitlines() if line]
 
     # The last line of the response contains the overall result of the pull
     # operation.
@@ -72,7 +72,6 @@ def example_container():
 
     container = docker_client.create_container(
         image=IMAGE,
-        detach=True,
         labels=[labels.CONTAINERS_FOR_TESTING_LABEL],
         environment={'VIRTUAL_HOST': 'example.docker'},
     )
