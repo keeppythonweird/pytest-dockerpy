@@ -57,7 +57,7 @@ will rely on the environment variables set when you run
 2. Install dependencies:
 
   ```bash
-  (some_virtual_env) pip install pytest docker-py backoff
+  (some_virtual_env) pip install -r test_requirements.txt
   ```
 3. Run the tests:
 

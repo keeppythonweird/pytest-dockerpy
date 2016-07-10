@@ -16,6 +16,6 @@ def test__works(example_container):
     assert result.json() == {"status": "alive"}
 
 
-@pytest.mark.skip("For demonstrating log output on failure")
+@pytest.mark.skip(reason="For demonstrating log output on failure")
 def test__error(example_container):
     raise Exception("oh no!")
