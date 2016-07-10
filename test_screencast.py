@@ -11,7 +11,7 @@ def _get_request(example_container):
     return requests.get("http://{url}/".format(url=example_container))
 
 
-def test__works(example_container):
+def test__example_service(example_container):
     result = _get_request(example_container)
     assert result.json() == {"status": "alive"}
 

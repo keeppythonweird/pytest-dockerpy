@@ -12,8 +12,11 @@ The example code demonstrates how to use [pytest](http://pytest.org/latest/)
 and [docker-py](https://github.com/docker/docker-py#docker-py).
 
 In this repo:
-* [test_screencast.py](./test_screencast.py) - Example tests, one that succceds,
-                                               and one that fails.
+* [test_screencast.py](./test_screencast.py) - Example tests:
+  * `test__example_service` - Successful test that runs once using docker-py
+    to start containers, and once using docker-compose
+  * `test_error` - When not skipped, demonstrates getting log output when
+                   the test fails
 * [conftest.py](./conftest.py) - pytest plugin to run our example service
 * [service](./service) - An example HTTP service, to be run by the tests
 
@@ -51,8 +54,7 @@ will rely on the environment variables set when you run
 
 1. Build the example image:
   ```bash
-  pushd service
-  docker build -t service .
+  docker-compose build
   popd
   ```
   

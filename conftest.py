@@ -1,6 +1,8 @@
 import json
 import pprint
 import os
+import shlex
+import subprocess
 
 import docker
 import pytest
@@ -16,6 +18,16 @@ def _docker_client():
 
 
 def pytest_runtest_logreport(report):
+    """ If the test has failed, include docker logs in the report
+
+    Any containers which have been labelled with
+    `labels.CONTAINERS_FOR_TESTING_LABEL` will have their logs dumped int
+    a section of the pytest report, so that users can use this information
+    to debug the test failure.
+
+    :param report: An object provided by `pytest` which provides information
+                   about the status of the test.
+    """
     if report.failed:
         docker_client = _docker_client()
         test_containers = docker_client.containers(
@@ -28,7 +40,11 @@ def pytest_runtest_logreport(report):
                 ("docker logs {!r}:".format(container['Id'])),
                 (docker_client.logs(container['Id'])),
             ]
-            report.longrepr.addsection('docker logs', os.linesep.join(log_lines))
+            report.longrepr.addsection(
+                'docker logs',
+                # If this output is in bytes, python3 will not allow us
+                # to join it
+                os.linesep.join([str(l) for l in log_lines]))
 
 
 def pull_image(image):
@@ -51,8 +67,7 @@ def pull_image(image):
             image, pull_result["error"]))
 
 
-@pytest.yield_fixture
-def example_container():
+def example_container_with_docker_py():
     docker_client = _docker_client()
 
     container = docker_client.create_container(
@@ -68,3 +83,24 @@ def example_container():
         container=container["Id"],
         force=True
     )
+
+
+def example_container_with_docker_compose():
+    subprocess.check_output(shlex.split("docker-compose up -d"))
+
+    docker_client = _docker_client()
+    container_info = docker_client.inspect_container("examplecontainer")
+    # Get the IP address using the network docker-compose automatically creates
+    yield container_info["NetworkSettings"]["Networks"]["pytestdockerpy_default"]["IPAddress"]
+
+    subprocess.check_output(shlex.split("docker-compose down"))
+
+
+@pytest.yield_fixture(params=[
+    "use_docker_py",
+    "use_docker_compose"])
+def example_container(request):
+    if request.param == "use_docker_py":
+        yield next(example_container_with_docker_py())
+    elif request.param == "use_docker_compose":
+        yield next(example_container_with_docker_compose())
