@@ -28,12 +28,12 @@ it will demonstrate docker logs being provided in the case of an error.
 We have tested these examples successfully on:
 
 * Linux
-* [docker-machine](#running-with-docker-machine) ([some setup required](#running-with-docker-machine))
 
-These platforms are not supported:
+These platforms are not supported (the examples rely on being able to access
+the IP of the running container from the host):
 
-* Docker beta for Mac
-* Docker beta for Windows
+* docker-machine
+* Docker beta for Mac or Windows
 
 At this time (July 2016)
 [the docker beta does not support accessing containers by IP from the host](https://forums.docker.com/t/host-excluded-from-bridge-network/12015).

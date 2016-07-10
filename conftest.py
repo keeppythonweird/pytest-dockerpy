@@ -3,7 +3,6 @@ import pprint
 import os
 
 import docker
-import docker.tls
 import pytest
 
 import labels
@@ -11,27 +10,9 @@ import labels
 
 IMAGE = "service"
 
-# Support for docker-machine, environment variables set by
-# docker-machine env (https://docs.docker.com/machine/reference/env/)
-DOCKER_HOST = os.environ.get('DOCKER_HOST', 'unix://var/run/docker.sock')
-DOCKER_CERT_PATH = os.environ.get('DOCKER_CERT_PATH')
-DOCKER_TLS_VERIFY = os.environ.get('DOCKER_TLS_VERIFY', '0') == '1'
-DOCKER_MACHINE_HOSTNAME = "example.docker"
-USING_DOCKER_MACHINE = True if not DOCKER_HOST.startswith("unix") else False
-
 
 def _docker_client():
-    if USING_DOCKER_MACHINE:
-        tls_config = docker.tls.TLSConfig(
-            client_cert=(
-                os.path.join(DOCKER_CERT_PATH, 'cert.pem'),
-                os.path.join(DOCKER_CERT_PATH, 'key.pem')),
-            ca_cert=os.path.join(DOCKER_CERT_PATH, 'ca.pem'),
-            verify=DOCKER_TLS_VERIFY,
-        )
-    else:
-        tls_config = False
-    return docker.Client(DOCKER_HOST, version="auto", tls=tls_config)
+    return docker.Client('unix://var/run/docker.sock', version="auto")
 
 
 def pytest_runtest_logreport(report):
@@ -73,20 +54,15 @@ def pull_image(image):
 @pytest.yield_fixture
 def example_container():
     docker_client = _docker_client()
-    environment_vars = {'VIRTUAL_HOST': DOCKER_MACHINE_HOSTNAME} if USING_DOCKER_MACHINE else None
 
     container = docker_client.create_container(
         image=IMAGE,
-        labels=[labels.CONTAINERS_FOR_TESTING_LABEL],
-        environment=environment_vars
+        labels=[labels.CONTAINERS_FOR_TESTING_LABEL]
     )
     docker_client.start(container=container["Id"])
     container_info = docker_client.inspect_container(container.get('Id'))
 
-    if USING_DOCKER_MACHINE:
-        yield DOCKER_MACHINE_HOSTNAME
-    else:
-        yield container_info["NetworkSettings"]["IPAddress"]
+    yield container_info["NetworkSettings"]["IPAddress"]
 
     docker_client.remove_container(
         container=container["Id"],
