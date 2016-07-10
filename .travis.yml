@@ -1,0 +1,11 @@
+sudo: required
+services:
+  - docker
+language: python
+python:
+    - "2.7"
+    - "3.4"
+install:
+    - "pip install -r test_requirements.txt"
+before_script: "pushd service && docker build -t service . && popd"
+script: "py.test test_screencast.py"
