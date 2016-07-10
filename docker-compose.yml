@@ -1,8 +1,5 @@
-version: '2'
-services:
-  example:
-    image: service
-    build: ./service
-    container_name: examplecontainer
-    labels:
-      - "pytest_docker_log"
+example:
+  build: ./service
+  container_name: examplecontainer
+  labels:
+    - "pytest_docker_log"

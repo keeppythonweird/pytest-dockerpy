@@ -90,8 +90,7 @@ def example_container_with_docker_compose():
 
     docker_client = _docker_client()
     container_info = docker_client.inspect_container("examplecontainer")
-    # Get the IP address using the network docker-compose automatically creates
-    yield container_info["NetworkSettings"]["Networks"]["pytestdockerpy_default"]["IPAddress"]
+    yield container_info["NetworkSettings"]["IPAddress"]
 
     subprocess.check_output(shlex.split("docker-compose down"))
 
