@@ -4,6 +4,8 @@ This repo contains the example code which accompanies
 the presentation
 [System Testing with pytest and docker-py](https://docs.google.com/presentation/d/1w5WUw_LsnK5a79HzKyaEavu-po9MpSF33QTRPilKoX8).
 
+[![Build Status](https://travis-ci.org/keeppythonweird/pytest-dockerpy.svg?branch=master)](https://travis-ci.org/keeppythonweird/pytest-dockerpy)
+
 <img align="right" src="cmdr_and_dockerpy.png">
 
 The example code demonstrates how to use [pytest](http://pytest.org/latest/)
