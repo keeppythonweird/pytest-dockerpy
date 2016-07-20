@@ -40,13 +40,6 @@ the IP of the running container from the host):
 At this time (July 2016)
 [the docker beta does not support accessing containers by IP from the host](https://forums.docker.com/t/host-excluded-from-bridge-network/12015).
 
-### Running with docker-machine
-
-If running with [docker-machine](https://docs.docker.com/machine/), the test
-will rely on the environment variables set when you run
-[docker-machine env](https://docs.docker.com/machine/reference/env/)
-(`DOCKER_HOST`, `DOCKER_CERT_PATH`, `DOCKER_TLS_VERIFY`).
-
 ## Running tests
 
 1. Build the example image:
